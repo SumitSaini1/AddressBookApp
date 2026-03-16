@@ -1,5 +1,6 @@
 package com.addressbook.app.service;
 import com.addressbook.app.model.Contact;
+import com.addressbook.app.repository.AddressBookDatabaseRepo;
 import com.addressbook.app.repository.AddressBookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import com.addressbook.app.dto.ContactDto;
 @Service
 public class AddressBookService {
 	@Autowired
-	private AddressBookRepository repo;
+	private AddressBookDatabaseRepo repo;
 	
 	public String addContact(ContactDto contactDTO) {
 
@@ -23,30 +24,42 @@ public class AddressBookService {
 	    contact.setPhoneNumber(contactDTO.getPhoneNumber());
 	    contact.setEmail(contactDTO.getEmail());
 
-	    return repo.addContact(contact);
+	    repo.save(contact);
+		return "Successfully Contact Added";
 	}
 	public String updateByName(String firstName, ContactDto updatedContactDto) {
 
-	    Contact contact = new Contact();
-
-	    contact.setLastName(updatedContactDto.getLastName());
-	    contact.setAddress(updatedContactDto.getAddress());
-	    contact.setCity(updatedContactDto.getCity());
-	    contact.setState(updatedContactDto.getState());
-	    contact.setZip(updatedContactDto.getZip());
-	    contact.setPhoneNumber(updatedContactDto.getPhoneNumber());
-	    contact.setEmail(updatedContactDto.getEmail());
-
-	    return repo.updateByName(firstName, contact);
+		Optional<Contact> optionalContact = repo.findByFirstName(firstName);
+	
+		if(optionalContact.isPresent()) {
+	
+			Contact contact = optionalContact.get();
+	
+			contact.setLastName(updatedContactDto.getLastName());
+			contact.setAddress(updatedContactDto.getAddress());
+			contact.setCity(updatedContactDto.getCity());
+			contact.setState(updatedContactDto.getState());
+			contact.setZip(updatedContactDto.getZip());
+			contact.setPhoneNumber(updatedContactDto.getPhoneNumber());
+			contact.setEmail(updatedContactDto.getEmail());
+	
+			repo.save(contact);
+	
+			return "Contact Updated Successfully";
+		}
+	
+		return "Contact Not Found";
 	}
 	
 	public List<Contact> showAllContacts(){
-		return repo.showAllContacts();
+		return repo.findAll();
 	}
 	public String deleteContactByName(String firstName) {
 		if(firstName==null || firstName.isEmpty()) {
 			return "Name Cannot be null or Empty";
 		}
-		return repo.deleteContactByName(firstName);
+		Contact contact = repo.findByFirstName(firstName).orElseThrow(()->new RuntimeException("Contact not found"));
+		repo.delete(contact);
+		return "Contact Deleted";
 	}
 }
