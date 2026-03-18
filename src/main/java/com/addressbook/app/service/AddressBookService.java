@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import com.addressbook.app.dto.ContactDto;
-
+import java.util.stream.*;
 @Service
 public class AddressBookService {
 	@Autowired
@@ -44,6 +44,11 @@ public class AddressBookService {
 		contact.setEmail(contactDTO.getEmail());
 		contact.setAddressBook(book);
 
+
+		boolean exist=repo.existsByFirstNameAndLastName(contact.getFirstName(),contact.getLastName() );
+		if(exist){
+			return "Contact Already Exist in "+bookName;
+		}
 		repo.save(contact);
 		return "Successfully Contact Added";
 	}
@@ -75,7 +80,11 @@ public class AddressBookService {
 	public List<Contact> showAllContacts() {
 		return repo.findAll();
 	}
-
+	// show address books
+	public List<AddressBook> showAllAddressBook(){
+		return addressBookRepo.findAll();
+	}
+	// delete contact by id 
 	public String deleteContactById(Long id) {
 
 		Contact contact = repo.findById(id)
@@ -85,5 +94,30 @@ public class AddressBookService {
 
 		return "Contact Deleted Successfully";
 	}
+
+	
+
+	// dictionary by city
+	public Map<String,List<Contact>> groupByCity(){
+		return repo.findAll().stream().collect(Collectors.groupingBy(Contact::getCity));
+
+	}
+	// dictionary by state
+	public Map<String,List<Contact>> groupByState(){
+		return repo.findAll().stream().collect(Collectors.groupingBy(Contact::getState));
+
+	}
+
+	// search by city
+	public List<Contact> findByCity(String firstName,String city){
+		
+		return repo.findAll().stream().filter(c-> c.getCity().equalsIgnoreCase(city) && c.getFirstName().equalsIgnoreCase(firstName)).toList();
+	}
+	// search by State 
+	public List<Contact> findByState(String firstName,String state){
+		List<Contact> contacts=repo.findAll().stream().filter(c-> c.getState().equalsIgnoreCase(state)&& c.getFirstName().equalsIgnoreCase(firstName)).toList();
+		return contacts;
+	}
+
 
 }
