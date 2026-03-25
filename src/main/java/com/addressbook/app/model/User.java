@@ -2,8 +2,11 @@ package com.addressbook.app.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+@Builder
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="users")
 public class User {
 

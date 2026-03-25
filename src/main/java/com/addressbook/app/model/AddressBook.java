@@ -7,13 +7,9 @@ import lombok.Data;
 @Data
 public class AddressBook {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique=true)
+    @Column(unique = true)
     private String name;
-   
 
-    
-
-    
 }
