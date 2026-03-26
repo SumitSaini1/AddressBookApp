@@ -43,7 +43,7 @@ public class AddressBookService {
 		contact.setPhoneNumber(contactDTO.getPhoneNumber());
 		contact.setEmail(contactDTO.getEmail());
 		contact.setAddressBook(book);
-
+		book.getContacts().add(contact);
 
 		boolean exist=repo.existsByFirstNameAndLastName(contact.getFirstName(),contact.getLastName() );
 		if(exist){

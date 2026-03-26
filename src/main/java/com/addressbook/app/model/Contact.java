@@ -1,5 +1,7 @@
 package com.addressbook.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,7 +25,8 @@ public class Contact {
 	private String zip;
 	private String phoneNumber;
 	private String email;
-
+	
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name="address_book_id")
 	private AddressBook addressBook;
