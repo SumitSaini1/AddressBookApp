@@ -1,5 +1,5 @@
 package com.addressbook.app.model;
-
+import com.addressbook.app.model.type.AuthProviderType;
 import jakarta.persistence.*;
 import lombok.*;
 @Builder
@@ -14,13 +14,18 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true,nullable=false)
+    @Column(unique=true,nullable=true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     private String role;
+
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProviderType providerType;
 
     
 
